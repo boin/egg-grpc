@@ -28,11 +28,14 @@ describe('test/stream.test.js', () => {
       const step = [];
       // metadata -> callback -> status
       done = pedding(3, done);
-      const stream = client.echoClientStream({ a: 'b' }, (err, response) => {
+      const stream = client.EchoClientStream({ a: 'b' }, (err, response) => {
         // callback trigger after metadata before status
         assert.deepEqual(step, [ 1 ]);
         step.push(2);
-        assert(response.msg === 'Server Received: [{"id":1,"userName":""},{"id":2,"userName":""},{"id":3,"userName":""}]');
+        assert(
+          response.msg ===
+                        'Server Received: [{"id":1,"userName":""},{"id":2,"userName":""},{"id":3,"userName":""}]'
+        );
         assert(response.originMeta.a === 'b');
         done(err);
       });
@@ -57,7 +60,7 @@ describe('test/stream.test.js', () => {
 
     it('should support one args', done => {
       // rpc(fn)
-      const stream = client.echoClientStream((err, response) => {
+      const stream = client.EchoClientStream((err, response) => {
         assert(response.msg === 'Server Received: [{"id":1,"userName":""},{"id":2,"userName":""}]');
         done(err);
       });
@@ -67,7 +70,7 @@ describe('test/stream.test.js', () => {
 
     it('should support three args', done => {
       // rpc(meta, opts, fn)
-      const stream = client.echoClientStream({ a: 'b' }, { timeout: 300 }, err => {
+      const stream = client.EchoClientStream({ a: 'b' }, { timeout: 300 }, err => {
         assert(err.code === grpc.status.DEADLINE_EXCEEDED);
         done();
       });
@@ -83,7 +86,7 @@ describe('test/stream.test.js', () => {
       // metadata -> data -> status -> end
       done = pedding(3, done);
 
-      const stream = client.echoServerStream({ id: 1, userName: 'grpc' }, { from: 'client' });
+      const stream = client.EchoServerStream({ id: 1, userName: 'grpc' }, { from: 'client' });
 
       stream.on('data', data => {
         assert(data.originMeta.from === 'client');
@@ -115,7 +118,7 @@ describe('test/stream.test.js', () => {
     it('should support one args', done => {
       done = pedding(2, done);
       // rpc(data)
-      const stream = client.echoServerStream({ id: 1, userName: 'grpc' });
+      const stream = client.EchoServerStream({ id: 1, userName: 'grpc' });
       // must consume
       stream.on('data', data => {
         assert(data.msg);
@@ -126,7 +129,7 @@ describe('test/stream.test.js', () => {
     it('should support three args', done => {
       done = pedding(2, done);
       // rpc(data, meta, opts)
-      const stream = client.echoServerStream({ id: 1, userName: 'grpc' }, { from: 'client' }, { timeout: 100 });
+      const stream = client.EchoServerStream({ id: 1, userName: 'grpc' }, { from: 'client' }, { timeout: 100 });
       // must consume
       stream.on('data', () => {
         throw 'should not trigger here';
@@ -144,7 +147,7 @@ describe('test/stream.test.js', () => {
 
   describe('Bidi Stream', () => {
     it('should echoStreamStream', done => {
-      const stream = client.echoStreamStream({ from: 'client' });
+      const stream = client.EchoStreamStream({ from: 'client' });
       const queue = [];
       stream.on('data', data => {
         assert(data.originMeta.from === 'client');
@@ -170,7 +173,7 @@ describe('test/stream.test.js', () => {
     it('should support two args', done => {
       done = pedding(2, done);
       // rpc(data, meta, opts)
-      const stream = client.echoStreamStream({ from: 'client' }, { timeout: 100 });
+      const stream = client.EchoStreamStream({ from: 'client' }, { timeout: 100 });
       // must consume
       stream.on('data', data => {
         assert(data.originMeta.from === 'client');

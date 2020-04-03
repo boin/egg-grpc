@@ -24,8 +24,8 @@ describe('test/options.test.js', () => {
 
   it('should echo with timeout', function* () {
     try {
-      yield client.echoTimeout({ id: 1, userName: 'grpc' }, undefined, { timeout: 100 });
-      throw ('should not exec here');
+      yield client.EchoTimeout({ id: 1, userName: 'grpc' }, undefined, { timeout: 100 });
+      throw 'should not exec here';
     } catch (err) {
       assert(err.code === grpc.status.DEADLINE_EXCEEDED);
     }
@@ -33,8 +33,8 @@ describe('test/options.test.js', () => {
 
   it('should echo with deadline', function* () {
     try {
-      yield client.echoTimeout({ id: 1, userName: 'grpc' }, undefined, { deadline: Date.now() + 100 });
-      throw ('should not exec here');
+      yield client.EchoTimeout({ id: 1, userName: 'grpc' }, undefined, { deadline: Date.now() + 100 });
+      throw 'should not exec here';
     } catch (err) {
       assert(err.code === grpc.status.DEADLINE_EXCEEDED);
     }

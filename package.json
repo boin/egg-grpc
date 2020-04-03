@@ -12,6 +12,7 @@
     "grpc"
   ],
   "dependencies": {
+    "@grpc/proto-loader": "^0.5.4",
     "debug": "^3.0.1",
     "extend2": "^1.0.0",
     "grpc": "^1.4.1",

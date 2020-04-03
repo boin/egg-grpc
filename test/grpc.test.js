@@ -23,9 +23,7 @@ describe('test/grpc.test.js', () => {
   afterEach(mm.restore);
 
   it('should GET /echo', function* () {
-    const response = yield app.httpRequest()
-      .get('/echo')
-      .set('Accept', 'application/json')
+    const response = yield app.httpRequest().get('/echo').set('Accept', 'application/json')
       .expect(200);
     assert(response.body.id === 1);
     assert(response.body.msg === 'from server');
@@ -34,7 +32,7 @@ describe('test/grpc.test.js', () => {
   });
 
   it('should echo', function* () {
-    const result = yield client.echo({ id: 1, userName: 'grpc' });
+    const result = yield client.Echo({ id: 1, userName: 'grpc' });
     assert(result.id === 1);
     assert(result.msg === 'from server');
     assert(result.originRequest.id === 1);
@@ -50,8 +48,8 @@ describe('test/grpc.test.js', () => {
 
   it('should echoError', function* () {
     try {
-      yield client.echoError({ id: 1, userName: 'grpc' });
-      throw ('should not exec here');
+      yield client.EchoError({ id: 1, userName: 'grpc' });
+      throw 'should not exec here';
     } catch (err) {
       assert(err.code === 444);
       assert(err.message.includes('this is an error'));
@@ -63,8 +61,8 @@ describe('test/grpc.test.js', () => {
 
   it('should throw with invalid request field', function* () {
     try {
-      yield client.echo({ abc: '123' });
-      throw ('should not exec here');
+      yield client.Echo({ abc: '123' });
+      throw 'should not exec here';
     } catch (err) {
       assert(!err.code);
       assert(err.message === '.example.TestRequest#abc is not a field: undefined');
@@ -74,7 +72,7 @@ describe('test/grpc.test.js', () => {
   it('should throw when rpc not exist', function* () {
     try {
       yield client.echoUnimplemented({ id: 1 });
-      throw ('should not exec here');
+      throw 'should not exec here';
     } catch (err) {
       assert(err.code === grpc.status.UNIMPLEMENTED);
       assert(err.message.includes('The server does not implement this method'));
@@ -89,7 +87,7 @@ describe('test/grpc.test.js', () => {
 
     const data = new TestRequest({ id: 1 });
     data.setUserName('grpc');
-    const result = yield client.echo(data);
+    const result = yield client.Echo(data);
 
     assert(result.id === 1);
     assert(result.msg === 'from server');
@@ -98,7 +96,7 @@ describe('test/grpc.test.js', () => {
   });
 
   it('should echo with metadata json', function* () {
-    const result = yield client.echo({ id: 1, userName: 'grpc' }, { key1: 'a', key2: 'b' }, {});
+    const result = yield client.Echo({ id: 1, userName: 'grpc' }, { key1: 'a', key2: 'b' }, {});
 
     assert(result.id === 1);
     assert(result.msg === 'from server');
@@ -112,7 +110,7 @@ describe('test/grpc.test.js', () => {
   it('should echo with metadata class', function* () {
     const metadata = new grpc.Metadata();
     metadata.set('key1', 'a');
-    const result = yield client.echo({ id: 1, userName: 'grpc' }, metadata, {});
+    const result = yield client.Echo({ id: 1, userName: 'grpc' }, metadata, {});
 
     assert(result.originMeta.key1 === 'a');
   });
@@ -120,8 +118,8 @@ describe('test/grpc.test.js', () => {
   it('should support 2 args, options as second args', function* () {
     try {
       // echo(data, options)
-      yield client.echoTimeout({ id: 1, userName: 'grpc' }, { timeout: 100 });
-      throw ('should not exec here');
+      yield client.EchoTimeout({ id: 1, userName: 'grpc' }, { timeout: 100 });
+      throw 'should not exec here';
     } catch (err) {
       assert(err.code === grpc.status.DEADLINE_EXCEEDED);
     }
@@ -130,15 +128,15 @@ describe('test/grpc.test.js', () => {
   it('should support 3 args', function* () {
     try {
       // echo(data, meta, options)
-      yield client.echoTimeout({ id: 1, userName: 'grpc' }, {}, { timeout: 100 });
-      throw ('should not exec here');
+      yield client.EchoTimeout({ id: 1, userName: 'grpc' }, {}, { timeout: 100 });
+      throw 'should not exec here';
     } catch (err) {
       assert(err.code === grpc.status.DEADLINE_EXCEEDED);
     }
   });
 
   it('should echoComplex', function* () {
-    const result = yield client.echoComplex({
+    const result = yield client.EchoComplex({
       list: [{ id: 1 }, { id: 2 }],
       mapping: {
         a: { id: 1 },

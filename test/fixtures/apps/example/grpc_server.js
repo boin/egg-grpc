@@ -2,7 +2,7 @@
 
 const grpc = require('grpc');
 const path = require('path');
-const proto = grpc.load(path.join(__dirname, 'app/proto/test.proto'), 'proto', { convertFieldsToCamelCase: true });
+const proto = grpc.loadPackageDefinition(require('@grpc/proto-loader').loadSync(path.join(__dirname, 'app/proto/test.proto')));
 
 const handlers = {
   echo(call, callback) {

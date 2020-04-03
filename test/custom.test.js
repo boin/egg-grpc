@@ -22,7 +22,7 @@ describe('test/custom.test.js', () => {
   afterEach(mm.restore);
 
   it('should echo with request-id', function* () {
-    const result = yield client.echo({ id: 1, userName: 'grpc' });
+    const result = yield client.Echo({ id: 1, userName: 'grpc' });
     assert(result.id === 1);
     assert(result.msg === 'from server');
     assert(result.originMeta['request-id'].startsWith('custom_caller_'));
